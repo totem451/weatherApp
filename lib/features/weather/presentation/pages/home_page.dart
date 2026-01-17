@@ -4,20 +4,33 @@ import '../../../../injection_container.dart';
 import '../bloc/weather_bloc.dart';
 import '../bloc/weather_event.dart';
 import '../bloc/weather_state.dart';
+import '../../../../core/services/notification_service.dart';
+import '../widgets/weather_background.dart';
+import '../widgets/current_weather_display.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    _initNotifications();
+  }
+
+  Future<void> _initNotifications() async {
+    final notificationService = sl<NotificationService>();
+    await notificationService.init();
+    await notificationService.requestPermissions();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF1A2344), Color(0xFF121212)],
-        ),
-      ),
+    return WeatherBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
@@ -26,12 +39,24 @@ class HomePage extends StatelessWidget {
             child: BlocProvider(
               create: (_) =>
                   sl<WeatherBloc>()..add(const GetCurrentWeatherEvent()),
-              child: BlocBuilder<WeatherBloc, WeatherState>(
+              child: BlocConsumer<WeatherBloc, WeatherState>(
+                listener: (context, state) {
+                  if (state is WeatherLoaded) {
+                    final condition = state.weather.main.toLowerCase();
+                    if (condition.contains('rain') ||
+                        condition.contains('drizzle') ||
+                        condition.contains('thunderstorm')) {
+                      sl<NotificationService>().showRainAlert(
+                        state.weather.cityName,
+                      );
+                    }
+                  }
+                },
                 builder: (context, state) {
                   if (state is WeatherLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is WeatherLoaded) {
-                    return _buildWeatherDisplay(state);
+                    return CurrentWeatherDisplay(weather: state.weather);
                   } else if (state is WeatherError) {
                     return Center(child: Text(state.message));
                   }
@@ -41,111 +66,6 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildWeatherDisplay(WeatherLoaded state) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          Text(
-            state.weather.cityName,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            DateTime.now().toLocal().toString().split(' ')[0],
-            style: const TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-          const SizedBox(height: 20),
-          Image.network(
-            'https://openweathermap.org/img/wn/${state.weather.icon}@4x.png',
-            height: 125,
-            width: 125,
-          ),
-          Text(
-            "${state.weather.temperature.toStringAsFixed(0)}°",
-            style: const TextStyle(
-              fontSize: 80,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            state.weather.description.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 20,
-              letterSpacing: 2,
-              color: Colors.white70,
-            ),
-          ),
-          const SizedBox(height: 40),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            childAspectRatio: 1.5,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            children: [
-              _buildDetailCard(
-                Icons.water_drop,
-                "${state.weather.humidity}%",
-                "Humidity",
-              ),
-              _buildDetailCard(
-                Icons.air,
-                "${state.weather.windSpeed} m/s",
-                "Wind",
-              ),
-              _buildDetailCard(
-                Icons.thermostat,
-                "${state.weather.tempMin.toStringAsFixed(1)}°",
-                "Min Temp",
-              ),
-              _buildDetailCard(
-                Icons.thermostat,
-                "${state.weather.tempMax.toStringAsFixed(1)}°",
-                "Max Temp",
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailCard(IconData icon, String value, String title) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.white, size: 30),
-          const SizedBox(height: 10),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14, color: Colors.white70),
-          ),
-        ],
       ),
     );
   }

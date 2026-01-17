@@ -9,12 +9,11 @@ environment:
 dependencies:
   dartz: ^0.10.1
   equatable: ^2.0.8
-  firebase_core: ^4.3.0
-  firebase_messaging: ^16.1.0
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
   flutter_dotenv: ^6.0.0
+  flutter_local_notifications: ^19.5.0
   geolocator: ^14.0.2
   get_it: ^9.2.0
   google_nav_bar: ^5.0.7

@@ -1,8 +1,7 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:weather_app/features/weather/presentation/pages/main_screen.dart';
 import 'injection_container.dart' as di;
-import 'core/services/notification_service.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -12,15 +11,11 @@ void main() async {
   try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
-    print("DotEnv load failed: $e");
+    if (kDebugMode) {
+      print("DotEnv load failed: $e");
+    }
   }
   await di.init();
-  try {
-    await Firebase.initializeApp();
-    await di.sl<NotificationService>().init();
-  } catch (e) {
-    print("Firebase initialization failed: $e");
-  }
 
   runApp(const MyApp());
 }

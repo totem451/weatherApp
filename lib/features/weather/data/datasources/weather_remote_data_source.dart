@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/error/exceptions.dart';
 import '../models/weather_model.dart';
@@ -17,7 +18,9 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
     try {
       return dotenv.env['API_KEY'] ?? '';
     } catch (e) {
-      print("DotEnv not initialized: $e");
+      if (kDebugMode) {
+        print("DotEnv not initialized: $e");
+      }
       return '';
     }
   }
