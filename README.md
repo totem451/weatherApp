@@ -59,7 +59,7 @@ La aplicación está diseñada bajo el principio de "listo para escalar". En fut
    - La aplicación utiliza OpenWeatherMap API. Asegúrate de que la API Key esté configurada en el archivo correspondiente (ej. `.env` o dentro de los DataSources).
 4. **Ejecutar:**
    ```bash
-   flutter run
+   flutter run --release -d <device_id>
    ```
 
 ---
