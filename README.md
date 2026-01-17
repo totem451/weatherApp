@@ -6,7 +6,8 @@ Una aplicación meteorológica moderna construida con Flutter, enfocada en la es
 - **Ubicación en Tiempo Real:** Obtención automática del clima local mediante GPS al iniciar la app.
 - **Buscador de Ciudades:** Búsqueda dinámica de condiciones climáticas por nombre de ciudad.
 - **Gestión de Estados:** Implementación robusta de estados (Carga, Éxito, Error y Permisos) utilizando el patrón **BLoC**.
-- **Sistema de Alertas:** Notificaciones locales automáticas que se disparan si se detectan condiciones de lluvia en la ubicación actual.
+- **Sistema de Alertas:** Diálogos informativos (In-App) que alertan al usuario si se detectan condiciones de lluvia en su ubicación o ciudad buscada.
+- **Código Documentado:** Comentarios detallados en cada capa (Core, Data, Domain, Presentation) explicando la arquitectura y lógica.
 - **Interfaz Premium:** Diseño modular con gradientes, micro-animaciones y widgets reutilizables.
 
 ## 🛠️ Stack Técnico y Arquitectura
@@ -15,7 +16,7 @@ Para este proyecto se ha implementado **Clean Architecture**, asegurando que la 
 
 ### Capas:
 1. **Domain (Capa de Negocio):** Contiene las Entidades puras y los Casos de Uso (Usecases). Es el núcleo de la aplicación y no depende de ninguna librería externa.
-2. **Data (Capa de Datos):** Implementación de los Repositorios, Modelos (Data Transfer Objects), Data Sources (API OpenWeatherMap) y Servicios (Notificaciones).
+2. **Data (Capa de Datos):** Implementación de los Repositorios, Modelos (Data Transfer Objects) y Data Sources (API OpenWeatherMap).
 3. **Presentation (Capa de UI):** Gestión de estados con `flutter_bloc`. Los componentes visuales están modularizados en una carpeta `widgets` para maximizar la reutilización.
 
 ### Decisiones Técnicas Relevantes:
@@ -24,7 +25,7 @@ Para este proyecto se ha implementado **Clean Architecture**, asegurando que la 
 - **Modularización de Widgets:** Extracción de componentes (tarjetas, buscadores, diálogos) para mantener las páginas (`Pages`) limpias y fáciles de mantener.
 
 ## ⚖️ Trade-offs (Decisiones de Compromiso)
-- **Local Notifications vs Firebase Cloud Messaging (FCM):** Para esta prueba técnica se priorizó el uso de **Notificaciones Locales**. Esto garantiza que la funcionalidad de "Alerta de Lluvia" sea 100% funcional en dispositivos físicos (especialmente iOS) sin necesidad de configurar una cuenta de Apple Developer paga o certificados APNs complejos, permitiendo una revisión inmediata de la feature.
+- **In-App Alerts vs Local/Remote Notifications:** Se optó por el uso de **Diálogos In-app** para las alertas de lluvia. Esta decisión garantiza una entrega inmediata y una interacción directa con el usuario dentro de la experiencia de la app, eliminando la dependencia de configuraciones nativas y permisos de sistema que suelen ser menos confiables para una prueba técnica inmediata.
 - **Persistencia en Memoria:** Debido al tiempo de la prueba, la lista de ciudades se gestiona en memoria. Sin embargo, la arquitectura está preparada para integrar una base de datos local (como Isar o Hive) simplemente añadiendo un nuevo Data Source.
 
 ## 🔮 Roadmap (Siguientes Pasos)

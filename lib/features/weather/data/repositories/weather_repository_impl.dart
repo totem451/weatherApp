@@ -50,10 +50,20 @@ class WeatherRepositoryImpl implements WeatherRepository {
       );
       return Right(remoteWeather);
     } on ServerException {
-      return const Left(ServerFailure('Server Failure'));
+      return const Left(
+        ServerFailure('The server is having trouble. Please try again later.'),
+      );
+    } on NetworkException {
+      return const Left(
+        NetworkFailure(
+          'No internet connection. Please check your network and try again.',
+        ),
+      );
     } catch (e) {
       // Catch any other errors and return them as a NetworkFailure
-      return Left(NetworkFailure(e.toString()));
+      return Left(
+        NetworkFailure('An unexpected error occurred: ${e.toString()}'),
+      );
     }
   }
 
@@ -64,7 +74,19 @@ class WeatherRepositoryImpl implements WeatherRepository {
       final remoteWeather = await remoteDataSource.getCityWeather(cityName);
       return Right(remoteWeather);
     } on ServerException {
-      return const Left(ServerFailure('Server Failure'));
+      return const Left(
+        ServerFailure('Could not find weather data for this city.'),
+      );
+    } on NetworkException {
+      return const Left(
+        NetworkFailure(
+          'No internet connection. Please check your network and try again.',
+        ),
+      );
+    } catch (e) {
+      return Left(
+        NetworkFailure('An unexpected error occurred: ${e.toString()}'),
+      );
     }
   }
 }

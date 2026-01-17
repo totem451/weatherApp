@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/error/failures.dart';
 import '../../domain/usecases/get_city_weather.dart';
 import '../../domain/usecases/get_current_weather.dart';
 import 'weather_event.dart';
@@ -17,8 +18,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       emit(WeatherLoading());
       final result = await getCurrentWeather(NoParams());
       result.fold(
-        (failure) =>
-            emit(WeatherError(_mapFailureToMessage(failure.toString()))),
+        (failure) => emit(WeatherError(_mapFailureToMessage(failure))),
         (weather) => emit(WeatherLoaded(weather)),
       );
     });
@@ -28,15 +28,14 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       emit(WeatherLoading());
       final result = await getCityWeather(Params(cityName: event.cityName));
       result.fold(
-        (failure) =>
-            emit(WeatherError(_mapFailureToMessage(failure.toString()))),
+        (failure) => emit(WeatherError(_mapFailureToMessage(failure))),
         (weather) => emit(WeatherLoaded(weather)),
       );
     });
   }
 
   // Maps failure messages to a more user-friendly format
-  String _mapFailureToMessage(String failure) {
-    return "Something went wrong: $failure";
+  String _mapFailureToMessage(Failure failure) {
+    return failure.message;
   }
 }

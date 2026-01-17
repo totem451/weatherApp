@@ -44,18 +44,15 @@ class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
     on<AddCityEvent>((event, emit) async {
       emit(WeatherListLoading());
       final result = await getCityWeather(Params(cityName: event.cityName));
-      result.fold(
-        (failure) => emit(WeatherListError("Could not find ${event.cityName}")),
-        (weather) {
-          if (!_cityList.any(
-            (element) => element.cityName == weather.cityName,
-          )) {
-            // Insert at the beginning of the list
-            _cityList.insert(0, weather);
-          }
-          emit(WeatherListUpdated(List.from(_cityList)));
-        },
-      );
+      result.fold((failure) => emit(WeatherListError(failure.message)), (
+        weather,
+      ) {
+        if (!_cityList.any((element) => element.cityName == weather.cityName)) {
+          // Insert at the beginning of the list
+          _cityList.insert(0, weather);
+        }
+        emit(WeatherListUpdated(List.from(_cityList)));
+      });
     });
 
     // Handle RemoveCityEvent: removes a city from the list

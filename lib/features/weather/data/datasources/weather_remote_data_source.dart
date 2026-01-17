@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/error/exceptions.dart';
@@ -49,16 +51,32 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
 
   // Helper method to perform the GET request and handle the response
   Future<WeatherModel> _getWeatherFromUrl(String url) async {
-    final response = await client.get(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
-    );
+    try {
+      final response = await client
+          .get(Uri.parse(url), headers: {'Content-Type': 'application/json'})
+          .timeout(const Duration(seconds: 10));
 
-    // Check if the request was successful
-    if (response.statusCode == 200) {
-      return WeatherModel.fromJson(json.decode(response.body));
-    } else {
-      // Throw a ServerException if the API returns an error
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        return WeatherModel.fromJson(json.decode(response.body));
+      } else {
+        // Throw a ServerException if the API returns an error
+        throw ServerException();
+      }
+    } on SocketException {
+      // Throw NetworkException if there's no internet or a socket issue
+      throw NetworkException();
+    } on HttpException {
+      // Throw NetworkException if there's an HTTP protocol error
+      throw NetworkException();
+    } on TimeoutException {
+      // Throw NetworkException if the request times out
+      throw NetworkException();
+    } catch (e) {
+      // Re-throw if it's already a custom exception, otherwise throw ServerException
+      if (e is ServerException || e is NetworkException) {
+        rethrow;
+      }
       throw ServerException();
     }
   }
