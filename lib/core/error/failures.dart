@@ -23,3 +23,8 @@ class CacheFailure extends Failure {
 class NetworkFailure extends Failure {
   const NetworkFailure(super.message);
 }
+
+// Represent failures occurring when required permissions are missing or denied
+class PermissionFailure extends Failure {
+  const PermissionFailure(super.message);
+}

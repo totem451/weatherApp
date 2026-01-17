@@ -21,7 +21,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
       // 1. Check if location services are enabled on the device
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        return const Left(NetworkFailure('Location services are disabled.'));
+        return const Left(PermissionFailure('Location services are disabled.'));
       }
 
       // 2. Check and request location permissions
@@ -29,14 +29,16 @@ class WeatherRepositoryImpl implements WeatherRepository {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          return const Left(NetworkFailure('Location permissions are denied'));
+          return const Left(
+            PermissionFailure('Location permissions are denied'),
+          );
         }
       }
 
       // 3. Handle cases where permissions are permanently denied
       if (permission == LocationPermission.deniedForever) {
         return const Left(
-          NetworkFailure(
+          PermissionFailure(
             'Location permissions are permanently denied, we cannot request permissions.',
           ),
         );
