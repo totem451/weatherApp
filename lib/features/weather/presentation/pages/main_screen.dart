@@ -7,6 +7,7 @@ import '../bloc/weather_list_event.dart';
 import 'home_page.dart';
 import 'list_page.dart';
 
+// Main screen with bottom navigation bar to switch between Home and List pages
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -15,15 +16,19 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  // Index of the currently selected tab
   int _selectedIndex = 0;
 
+  // List of pages to display in the navigation
   final List<Widget> _pages = [const HomePage(), const ListPage()];
 
   @override
   Widget build(BuildContext context) {
+    // Provide WeatherListBloc to the whole screen as both pages might need it
     return BlocProvider(
       create: (_) => sl<WeatherListBloc>()..add(LoadDefaultCitiesEvent()),
       child: Scaffold(
+        // IndexedStack preserves the state of child widgets when switching tabs
         body: IndexedStack(index: _selectedIndex, children: _pages),
         bottomNavigationBar: Container(
           color: const Color(0xFF121212),

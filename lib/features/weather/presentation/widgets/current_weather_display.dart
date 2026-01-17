@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/weather.dart';
 import 'weather_detail_card.dart';
 
+// Widget that displays the primary weather information on the Home Page
 class CurrentWeatherDisplay extends StatelessWidget {
   final WeatherEntity weather;
 
@@ -13,6 +14,7 @@ class CurrentWeatherDisplay extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 20),
+          // City Name
           Text(
             weather.cityName,
             style: const TextStyle(
@@ -22,11 +24,13 @@ class CurrentWeatherDisplay extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+          // Current Date
           Text(
             DateTime.now().toLocal().toString().split(' ')[0],
             style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
           const SizedBox(height: 20),
+          // Weather Icon from OpenWeatherMap CDN
           Image.network(
             'https://openweathermap.org/img/wn/${weather.icon}@4x.png',
             height: 125,
@@ -35,6 +39,7 @@ class CurrentWeatherDisplay extends StatelessWidget {
               return const Icon(Icons.error, color: Colors.white, size: 50);
             },
           ),
+          // Current Temperature
           Text(
             "${weather.temperature.toStringAsFixed(0)}°",
             style: const TextStyle(
@@ -43,6 +48,7 @@ class CurrentWeatherDisplay extends StatelessWidget {
               color: Colors.white,
             ),
           ),
+          // Weather Description (e.g., Clear Sky)
           Text(
             weather.description.toUpperCase(),
             style: const TextStyle(
@@ -52,6 +58,7 @@ class CurrentWeatherDisplay extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 40),
+          // Grid of weather details like humidity, wind, and temperature ranges
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

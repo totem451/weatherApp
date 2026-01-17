@@ -1,5 +1,7 @@
 import '../../domain/entities/weather.dart';
 
+// Data model for weather information, extending the domain entity
+// Includes mapping logic from and to JSON for API interactions
 class WeatherModel extends WeatherEntity {
   const WeatherModel({
     required super.cityName,
@@ -13,6 +15,7 @@ class WeatherModel extends WeatherEntity {
     required super.windSpeed,
   });
 
+  // Factory constructor to create a WeatherModel from OpenWeatherMap API JSON
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
     return WeatherModel(
       cityName: json['name'],
@@ -27,6 +30,7 @@ class WeatherModel extends WeatherEntity {
     );
   }
 
+  // Method to convert the model back to JSON format
   Map<String, dynamic> toJson() {
     return {
       'name': cityName,

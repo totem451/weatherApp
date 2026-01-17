@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+// Modular dialog to alert the user about rain in a specific city
 class RainAlertDialog extends StatelessWidget {
   final String cityName;
 
   const RainAlertDialog({super.key, required this.cityName});
 
+  // Static helper to conveniently show the dialog from anywhere in the app
   static Future<void> show(BuildContext context, String cityName) {
     return showDialog(
       context: context,
@@ -30,7 +32,7 @@ class RainAlertDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context), // Close the dialog
           child: const Text("OK", style: TextStyle(color: Colors.blueAccent)),
         ),
       ],

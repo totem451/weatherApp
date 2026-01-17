@@ -5,12 +5,14 @@ import 'weather_event.dart';
 import 'weather_state.dart';
 import '../../../../core/usecases/usecase.dart';
 
+// BLoC for managing the state of weather for the current city or search results
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   final GetCurrentWeather getCurrentWeather;
   final GetCityWeather getCityWeather;
 
   WeatherBloc({required this.getCurrentWeather, required this.getCityWeather})
     : super(WeatherEmpty()) {
+    // Handle GetCurrentWeatherEvent: fetching weather based on user's current location
     on<GetCurrentWeatherEvent>((event, emit) async {
       emit(WeatherLoading());
       final result = await getCurrentWeather(NoParams());
@@ -21,6 +23,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       );
     });
 
+    // Handle GetCityWeatherEvent: fetching weather for a specific city name
     on<GetCityWeatherEvent>((event, emit) async {
       emit(WeatherLoading());
       final result = await getCityWeather(Params(cityName: event.cityName));
@@ -32,6 +35,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     });
   }
 
+  // Maps failure messages to a more user-friendly format
   String _mapFailureToMessage(String failure) {
     return "Something went wrong: $failure";
   }

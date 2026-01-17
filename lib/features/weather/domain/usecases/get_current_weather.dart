@@ -4,6 +4,7 @@ import '../../../../core/error/failures.dart';
 import '../entities/weather.dart';
 import '../repositories/weather_repository.dart';
 
+// UseCase to fetch current weather based on the device's location
 class GetCurrentWeather implements UseCase<WeatherEntity, NoParams> {
   final WeatherRepository repository;
 

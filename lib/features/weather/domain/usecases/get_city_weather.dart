@@ -5,6 +5,7 @@ import '../../../../core/error/failures.dart';
 import '../entities/weather.dart';
 import '../repositories/weather_repository.dart';
 
+// UseCase to fetch weather for a specific city name
 class GetCityWeather implements UseCase<WeatherEntity, Params> {
   final WeatherRepository repository;
 
@@ -16,6 +17,7 @@ class GetCityWeather implements UseCase<WeatherEntity, Params> {
   }
 }
 
+// Parameters needed for the GetCityWeather usecase
 class Params extends Equatable {
   final String cityName;
   const Params({required this.cityName});

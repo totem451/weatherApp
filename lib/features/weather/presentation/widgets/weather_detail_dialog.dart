@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/weather.dart';
 
+// A detailed dialog showing comprehensive weather metrics for a specific city
 class WeatherDetailDialog extends StatelessWidget {
   final WeatherEntity weather;
 
   const WeatherDetailDialog({super.key, required this.weather});
 
+  // Static helper to display the detail dialog
   static Future<void> show(BuildContext context, WeatherEntity weather) async {
     await showDialog(
       context: context,
@@ -31,6 +33,7 @@ class WeatherDetailDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // City Name Header
             Text(
               weather.cityName,
               style: const TextStyle(
@@ -40,6 +43,7 @@ class WeatherDetailDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
+            // Weather Icon
             Image.network(
               'https://openweathermap.org/img/wn/${weather.icon}@4x.png',
               height: 100,
@@ -47,6 +51,7 @@ class WeatherDetailDialog extends StatelessWidget {
               errorBuilder: (context, error, stackTrace) =>
                   const Icon(Icons.error, color: Colors.white, size: 50),
             ),
+            // Main Temperature Display
             Text(
               "${weather.temperature.toStringAsFixed(1)}°C",
               style: const TextStyle(
@@ -55,6 +60,7 @@ class WeatherDetailDialog extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
+            // Weather Condition Description
             Text(
               weather.description.toUpperCase(),
               style: const TextStyle(
@@ -66,6 +72,7 @@ class WeatherDetailDialog extends StatelessWidget {
             const SizedBox(height: 20),
             const Divider(color: Colors.white24),
             const SizedBox(height: 10),
+            // Secondary Metrics (Humidity, Wind)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -78,6 +85,7 @@ class WeatherDetailDialog extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
+            // Temperature extremes (Min, Max)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -94,6 +102,7 @@ class WeatherDetailDialog extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
+            // Close Action
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
@@ -110,6 +119,7 @@ class WeatherDetailDialog extends StatelessWidget {
     );
   }
 
+  // Helper to build a consistent layout for each metric item in the dialog
   Widget _buildDialogItem(IconData icon, String value, String label) {
     return Column(
       children: [

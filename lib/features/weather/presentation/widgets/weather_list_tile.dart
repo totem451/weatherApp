@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/weather.dart';
 
+// Custom list tile to display a summary of weather for a city in the List Page
 class WeatherListTile extends StatelessWidget {
   final WeatherEntity weather;
   final VoidCallback onTap;
@@ -22,6 +23,7 @@ class WeatherListTile extends StatelessWidget {
           horizontal: 20,
           vertical: 10,
         ),
+        // Small weather icon
         leading: Image.network(
           'https://openweathermap.org/img/wn/${weather.icon}@2x.png',
           width: 50,
@@ -29,6 +31,7 @@ class WeatherListTile extends StatelessWidget {
             return const Icon(Icons.error, color: Colors.white);
           },
         ),
+        // City Name
         title: Text(
           weather.cityName,
           style: const TextStyle(
@@ -37,10 +40,12 @@ class WeatherListTile extends StatelessWidget {
             color: Colors.white,
           ),
         ),
+        // Short description (e.g., cloudy)
         subtitle: Text(
           weather.description,
           style: const TextStyle(color: Colors.white70),
         ),
+        // Primary temperature
         trailing: Text(
           "${weather.temperature.toStringAsFixed(0)}°",
           style: const TextStyle(
@@ -49,7 +54,7 @@ class WeatherListTile extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        onTap: onTap,
+        onTap: onTap, // Open details on tap
       ),
     );
   }

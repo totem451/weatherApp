@@ -1,15 +1,16 @@
 import 'package:equatable/equatable.dart';
 
+// Represents the core weather data structure used in the domain layer
 class WeatherEntity extends Equatable {
-  final String cityName;
-  final String main;
-  final String description;
-  final String icon;
-  final double temperature;
-  final double tempMin;
-  final double tempMax;
-  final int humidity;
-  final double windSpeed;
+  final String cityName; // Name of the city
+  final String main; // General weather condition (e.g., Rain, Clear)
+  final String description; // Detailed description (e.g., light rain)
+  final String icon; // Icon code from OpenWeatherMap
+  final double temperature; // Current temperature in Celsius
+  final double tempMin; // Minimum temperature
+  final double tempMax; // Maximum temperature
+  final int humidity; // Humidity percentage
+  final double windSpeed; // Wind speed in m/s
 
   const WeatherEntity({
     required this.cityName,

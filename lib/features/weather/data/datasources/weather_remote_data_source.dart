@@ -5,15 +5,18 @@ import '../../../../core/error/exceptions.dart';
 import '../models/weather_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+// Data source interface for fetching weather data from a remote API
 abstract class WeatherRemoteDataSource {
   Future<WeatherModel> getCurrentWeather(String location);
   Future<WeatherModel> getCityWeather(String cityName);
   Future<WeatherModel> getWeatherByCoordinates(double lat, double lon);
 }
 
+// Implementation of WeatherRemoteDataSource using the http package
 class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
   final http.Client client;
 
+  // Retrieve API key from environment variables
   String get apiKey {
     try {
       return dotenv.env['API_KEY'] ?? '';
@@ -25,6 +28,7 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
     }
   }
 
+  // Base URL for the OpenWeatherMap API
   final String baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
   WeatherRemoteDataSourceImpl({required this.client});
@@ -43,15 +47,18 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
         '$baseUrl?lat=$lat&lon=$lon&appid=$apiKey&units=metric',
       );
 
+  // Helper method to perform the GET request and handle the response
   Future<WeatherModel> _getWeatherFromUrl(String url) async {
     final response = await client.get(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
     );
 
+    // Check if the request was successful
     if (response.statusCode == 200) {
       return WeatherModel.fromJson(json.decode(response.body));
     } else {
+      // Throw a ServerException if the API returns an error
       throw ServerException();
     }
   }

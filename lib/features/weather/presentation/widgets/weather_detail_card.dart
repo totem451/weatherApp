@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+// A modular card used to display specific weather metrics (e.g., Humidity, Wind Speed)
 class WeatherDetailCard extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final String title;
+  final IconData icon; // Icon representing the metric
+  final String value; // The actual data value (e.g., "50%", "10 m/s")
+  final String title; // Subtitle describing the metric
 
   const WeatherDetailCard({
     super.key,
@@ -16,7 +17,9 @@ class WeatherDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(
+          alpha: 0.05,
+        ), // Subtle transparent background
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),

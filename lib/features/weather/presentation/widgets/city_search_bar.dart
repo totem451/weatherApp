@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/weather_list_bloc.dart';
 import '../bloc/weather_list_event.dart';
 
+// A search bar widget that allows users to input a city name and add it to their weather list
 class CitySearchBar extends StatefulWidget {
   const CitySearchBar({super.key});
 
@@ -11,6 +12,7 @@ class CitySearchBar extends StatefulWidget {
 }
 
 class _CitySearchBarState extends State<CitySearchBar> {
+  // Controller to manage the text input in the search field
   late final TextEditingController _controller;
 
   @override
@@ -21,14 +23,18 @@ class _CitySearchBarState extends State<CitySearchBar> {
 
   @override
   void dispose() {
+    // Always dispose controllers to avoid memory leaks
     _controller.dispose();
     super.dispose();
   }
 
+  // Helper method to trigger the city addition logic
   void _onAddCity() {
     if (_controller.text.isNotEmpty) {
+      // Dispatch an AddCityEvent to the WeatherListBloc
       context.read<WeatherListBloc>().add(AddCityEvent(_controller.text));
       _controller.clear();
+      // Hide the keyboard after submission
       FocusScope.of(context).unfocus();
     }
   }
@@ -56,6 +62,7 @@ class _CitySearchBarState extends State<CitySearchBar> {
           ),
         ),
         const SizedBox(width: 10),
+        // Circle button to manually trigger the search/add action
         Container(
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.1),
