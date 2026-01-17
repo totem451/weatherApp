@@ -8,7 +8,6 @@ import 'features/weather/domain/usecases/get_city_weather.dart';
 import 'features/weather/domain/usecases/get_current_weather.dart';
 import 'features/weather/presentation/bloc/weather_bloc.dart';
 import 'features/weather/presentation/bloc/weather_list_bloc.dart';
-import 'core/services/notification_service.dart';
 
 final sl = GetIt.instance;
 
@@ -30,6 +29,4 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton(() => http.Client());
-
-  sl.registerLazySingleton(() => NotificationService());
 }

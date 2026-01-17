@@ -4,9 +4,9 @@ import '../../../../injection_container.dart';
 import '../bloc/weather_bloc.dart';
 import '../bloc/weather_event.dart';
 import '../bloc/weather_state.dart';
-import '../../../../core/services/notification_service.dart';
 import '../widgets/weather_background.dart';
 import '../widgets/current_weather_display.dart';
+import '../widgets/rain_alert_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,18 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    _initNotifications();
-  }
-
-  Future<void> _initNotifications() async {
-    final notificationService = sl<NotificationService>();
-    await notificationService.init();
-    await notificationService.requestPermissions();
-  }
-
   @override
   Widget build(BuildContext context) {
     return WeatherBackground(
@@ -46,9 +34,7 @@ class _HomePageState extends State<HomePage> {
                     if (condition.contains('rain') ||
                         condition.contains('drizzle') ||
                         condition.contains('thunderstorm')) {
-                      sl<NotificationService>().showRainAlert(
-                        state.weather.cityName,
-                      );
+                      RainAlertDialog.show(context, state.weather.cityName);
                     }
                   }
                 },
