@@ -28,16 +28,22 @@ class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
         "Toronto",
       ];
 
-      for (final cityName in defaultCities) {
-        final result = await getCityWeather(Params(cityName: cityName));
+      // Fetch all city weather in parallel for better performance
+      final results = await Future.wait(
+        defaultCities.map(
+          (cityName) => getCityWeather(Params(cityName: cityName)),
+        ),
+      );
+
+      for (final result in results) {
         result.fold((failure) => null, (weather) {
           // Add city only if it's not already in the list
           if (!_cityList.any((e) => e.cityName == weather.cityName)) {
             _cityList.add(weather);
-            emit(WeatherListUpdated(List.from(_cityList)));
           }
         });
       }
+      emit(WeatherListUpdated(List.from(_cityList)));
     });
 
     // Handle AddCityEvent: adds a new city to the list based on search results
@@ -58,6 +64,27 @@ class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
     // Handle RemoveCityEvent: removes a city from the list
     on<RemoveCityEvent>((event, emit) {
       _cityList.removeWhere((element) => element.cityName == event.cityName);
+      emit(WeatherListUpdated(List.from(_cityList)));
+    });
+
+    // Handle RefreshWeatherListEvent: refreshes weather for all cities in the current list
+    on<RefreshWeatherListEvent>((event, emit) async {
+      if (_cityList.isEmpty) return;
+
+      final currentCities = _cityList.map((e) => e.cityName).toList();
+
+      final results = await Future.wait(
+        currentCities.map(
+          (cityName) => getCityWeather(Params(cityName: cityName)),
+        ),
+      );
+
+      _cityList.clear();
+      for (final result in results) {
+        result.fold((failure) => null, (weather) {
+          _cityList.add(weather);
+        });
+      }
       emit(WeatherListUpdated(List.from(_cityList)));
     });
   }

@@ -11,6 +11,8 @@ abstract class UseCase<Type, Params> {
 
 // Class used when a UseCase does not requires any parameters
 class NoParams extends Equatable {
+  const NoParams();
+
   @override
   List<Object> get props => [];
 }

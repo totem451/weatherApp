@@ -11,6 +11,8 @@ class WeatherEntity extends Equatable {
   final double tempMax; // Maximum temperature
   final int humidity; // Humidity percentage
   final double windSpeed; // Wind speed in m/s
+  final double latitude;
+  final double longitude;
 
   const WeatherEntity({
     required this.cityName,
@@ -22,6 +24,8 @@ class WeatherEntity extends Equatable {
     required this.tempMax,
     required this.humidity,
     required this.windSpeed,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override

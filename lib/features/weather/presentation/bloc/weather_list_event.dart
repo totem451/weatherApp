@@ -30,3 +30,6 @@ class RemoveCityEvent extends WeatherListEvent {
   @override
   List<Object> get props => [cityName];
 }
+
+// Event to trigger refreshing the weather for all cities in the current list
+class RefreshWeatherListEvent extends WeatherListEvent {}

@@ -9,8 +9,30 @@ Una aplicación meteorológica moderna construida con Flutter, enfocada en la es
 - **Sistema de Alertas:** Diálogos informativos (In-App) que alertan al usuario si se detectan condiciones de lluvia en su ubicación o ciudad buscada.
 - **Código Documentado:** Comentarios detallados en cada capa (Core, Data, Domain, Presentation) explicando la arquitectura y lógica.
 - **Interfaz Premium:** Diseño modular con gradientes, micro-animaciones y widgets reutilizables.
+- **Estrategia Offline-First:** Implementación de persistencia local con **Hive**. Los datos se cargan instantáneamente desde el caché mientras se sincronizan en segundo plano.
+- **Rendimiento Optimizado:** Uso de `Future.wait` para peticiones en paralelo en la lista de ciudades, reduciendo drásticamente el tiempo de carga.
+- **UX de Alto Nivel:** Implementación de **Skeleton Shimmer** para estados de carga y **Pull-to-refresh** para actualizaciones manuales.
+- **Resiliencia de Red:** Monitoreo en tiempo real de la conectividad para fallback automático a datos cacheados.
+- **Arquitectura Limpia y Escalable:** Separación estricta de responsabilidades (Data, Domain, Presentation) siguiendo los principios de Clean Architecture.
+
+## 🧪 Calidad y Testing
+Se ha incluido una suite de pruebas para garantizar la integridad de la lógica de negocio:
+- **Unit Tests:** Pruebas de UseCases para verificar la interacción con el repositorio.
+- **Bloc Tests:** Verificación exhaustiva de transiciones de estado (Loading -> Loaded / Error).
+
+Para ejecutar las pruebas:
+```bash
+flutter test
+```
 
 ## 🛠️ Stack Técnico y Arquitectura
+
+- **Estado:** `flutter_bloc` (v9+)
+- **Persistencia:** `Hive` (NoSQL ultrarrápido)
+- **Red:** `http` + `internet_connection_checker`
+- **DI:** `get_it`
+- **Testing:** `bloc_test`, `mocktail`
+- **Utilidades:** `dartz` (Functional Error Handling), `shimmer`, `equatable`.
 
 Para este proyecto se ha implementado **Clean Architecture**, asegurando que la lógica de negocio esté desacoplada de la interfaz y las fuentes de datos.
 
@@ -26,7 +48,9 @@ Para este proyecto se ha implementado **Clean Architecture**, asegurando que la 
 
 ## ⚖️ Trade-offs (Decisiones de Compromiso)
 - **In-App Alerts vs Local/Remote Notifications:** Se optó por el uso de **Diálogos In-app** para las alertas de lluvia. Esta decisión garantiza una entrega inmediata y una interacción directa con el usuario dentro de la experiencia de la app, eliminando la dependencia de configuraciones nativas y permisos de sistema que suelen ser menos confiables para una prueba técnica inmediata.
-- **Persistencia en Memoria:** Debido al tiempo de la prueba, la lista de ciudades se gestiona en memoria. Sin embargo, la arquitectura está preparada para integrar una base de datos local (como Isar o Hive) simplemente añadiendo un nuevo Data Source.
+- **Hive vs SQLite:** Se eligió Hive por su rendimiento superior en dispositivos móviles para el almacenamiento de tipos de datos simples como climas recientes y favoritos.
+- **Functional Error Handling:** El uso de `Either` (Dartz) asegura que los errores se manejen explícitamente en la UI, evitando excepciones no capturadas.
+- **UX Perception:** Se priorizó el uso de Shimmer sobre Spinners tradicionales para mejorar la percepción de velocidad de carga del usuario.
 
 ## 🔮 Roadmap (Siguientes Pasos)
 La aplicación está diseñada bajo el principio de "listo para escalar". En futuras versiones se planea:

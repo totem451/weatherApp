@@ -8,6 +8,8 @@ import '../widgets/weather_background.dart';
 import '../widgets/current_weather_display.dart';
 import '../widgets/rain_alert_dialog.dart';
 
+import '../widgets/weather_shimmer.dart';
+
 // Page that displays the current weather for the user's location
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -43,22 +45,42 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
                 builder: (context, state) {
-                  if (state is WeatherLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is WeatherLoaded) {
-                    // Display the weather information using a custom widget
-                    return CurrentWeatherDisplay(weather: state.weather);
-                  } else if (state is WeatherError) {
-                    // Show error message if something went wrong
-                    return Center(child: Text(state.message));
-                  }
-                  return const Center(child: Text('Checking location...'));
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<WeatherBloc>().add(
+                        const GetCurrentWeatherEvent(),
+                      );
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: _buildContent(state),
+                    ),
+                  );
                 },
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildContent(WeatherState state) {
+    if (state is WeatherLoading) {
+      return const WeatherShimmer();
+    } else if (state is WeatherLoaded) {
+      // Display the weather information using a custom widget
+      return CurrentWeatherDisplay(weather: state.weather);
+    } else if (state is WeatherError) {
+      // Show error message if something went wrong
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Center(child: Text(state.message, textAlign: TextAlign.center)),
+      );
+    }
+    return const SizedBox(
+      height: 200,
+      child: Center(child: Text('Checking location...')),
     );
   }
 }
