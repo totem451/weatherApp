@@ -7,6 +7,7 @@ import '../widgets/city_search_bar.dart';
 import '../widgets/weather_background.dart';
 import '../widgets/weather_detail_dialog.dart';
 import '../widgets/weather_list_tile.dart';
+import '../widgets/offline_error_display.dart';
 
 // Page that displays a list of cities and their weather data
 class ListPage extends StatelessWidget {
@@ -42,7 +43,7 @@ class ListPage extends StatelessWidget {
                         RefreshWeatherListEvent(),
                       );
                     },
-                    child: _buildListContent(state),
+                    child: _buildListContent(context, state),
                   );
                 },
               ),
@@ -53,7 +54,7 @@ class ListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildListContent(WeatherListState state) {
+  Widget _buildListContent(BuildContext context, WeatherListState state) {
     if (state is WeatherListUpdated) {
       if (state.weatherList.isEmpty) {
         return const SingleChildScrollView(
@@ -95,9 +96,11 @@ class ListPage extends StatelessWidget {
     } else if (state is WeatherListLoading) {
       return const Center(child: CircularProgressIndicator());
     } else if (state is WeatherListError) {
-      return SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: SizedBox(height: 400, child: Center(child: Text(state.message))),
+      return OfflineErrorDisplay(
+        message: state.message,
+        onRetry: () {
+          context.read<WeatherListBloc>().add(RefreshWeatherListEvent());
+        },
       );
     }
     return const SingleChildScrollView(

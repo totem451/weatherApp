@@ -1,10 +1,13 @@
 import 'package:hive/hive.dart';
 import '../models/weather_model.dart';
+import '../models/forecast_model.dart';
 import '../../../../core/error/exceptions.dart';
 
 abstract class WeatherLocalDataSource {
-  Future<void> cacheWeather(WeatherModel weatherToCache);
-  Future<WeatherModel> getLastWeather();
+  Future<void> cacheWeather(WeatherModel weatherToCache, {String? key});
+  Future<WeatherModel> getLastWeather({String? key});
+  Future<void> cacheForecast(List<ForecastModel> forecastToCache);
+  Future<List<ForecastModel>> getLastForecast();
   Future<void> saveFavoriteCity(String cityName);
   Future<void> removeFavoriteCity(String cityName);
   Future<List<String>> getFavoriteCities();
@@ -13,23 +16,41 @@ abstract class WeatherLocalDataSource {
 class WeatherLocalDataSourceImpl implements WeatherLocalDataSource {
   final Box<WeatherModel> weatherBox;
   final Box<String> favoritesBox;
+  final Box<List> forecastBox;
 
   WeatherLocalDataSourceImpl({
     required this.weatherBox,
     required this.favoritesBox,
+    required this.forecastBox,
   });
 
   @override
-  Future<void> cacheWeather(WeatherModel weatherToCache) async {
-    // We only cache the latest weather for the home page / last search
-    await weatherBox.put('CACHED_WEATHER', weatherToCache);
+  Future<void> cacheWeather(WeatherModel weatherToCache, {String? key}) async {
+    final cacheKey = key ?? weatherToCache.cityName.toLowerCase();
+    await weatherBox.put(cacheKey, weatherToCache);
   }
 
   @override
-  Future<WeatherModel> getLastWeather() {
-    final weather = weatherBox.get('CACHED_WEATHER');
+  Future<WeatherModel> getLastWeather({String? key}) {
+    final cacheKey = key ?? 'CACHED_WEATHER';
+    final weather = weatherBox.get(cacheKey);
     if (weather != null) {
       return Future.value(weather);
+    } else {
+      throw CacheException();
+    }
+  }
+
+  @override
+  Future<void> cacheForecast(List<ForecastModel> forecastToCache) async {
+    await forecastBox.put('CACHED_FORECAST', forecastToCache);
+  }
+
+  @override
+  Future<List<ForecastModel>> getLastForecast() {
+    final forecast = forecastBox.get('CACHED_FORECAST');
+    if (forecast != null) {
+      return Future.value(forecast.cast<ForecastModel>());
     } else {
       throw CacheException();
     }

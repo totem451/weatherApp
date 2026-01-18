@@ -32,6 +32,20 @@ class WeatherShimmer extends StatelessWidget {
               (_) => _shimmerRect(double.infinity, 80),
             ),
           ),
+          const SizedBox(height: 20),
+          _shimmerRect(120, 24), // "Next 5 Days" label
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 140,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: _shimmerRect(100, 140),
+              ),
+            ),
+          ),
         ],
       ),
     );

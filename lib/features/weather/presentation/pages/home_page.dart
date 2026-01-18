@@ -5,10 +5,12 @@ import '../bloc/weather_bloc.dart';
 import '../bloc/weather_event.dart';
 import '../bloc/weather_state.dart';
 import '../widgets/weather_background.dart';
-import '../widgets/current_weather_display.dart';
 import '../widgets/rain_alert_dialog.dart';
+import '../bloc/forecast_bloc.dart';
+import '../bloc/forecast_event.dart';
 
-import '../widgets/weather_shimmer.dart';
+import '../widgets/home_weather_content.dart';
+import '../widgets/home_forecast_content.dart';
 
 // Page that displays the current weather for the user's location
 class HomePage extends StatefulWidget {
@@ -27,33 +29,50 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: BlocProvider(
-              // Trigger fetching current weather when the page is built
-              create: (_) =>
-                  sl<WeatherBloc>()..add(const GetCurrentWeatherEvent()),
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) =>
+                      sl<WeatherBloc>()..add(const GetCurrentWeatherEvent()),
+                ),
+                BlocProvider(create: (_) => sl<ForecastBloc>()),
+              ],
               child: BlocConsumer<WeatherBloc, WeatherState>(
                 listener: (context, state) {
-                  // Check for rain conditions when weather data is loaded
                   if (state is WeatherLoaded) {
+                    // Fetch forecast once we have coordinates
+                    context.read<ForecastBloc>().add(
+                      GetFiveDayForecastEvent(
+                        lat: state.weather.latitude,
+                        lon: state.weather.longitude,
+                      ),
+                    );
+
+                    // Check for rain conditions
                     final condition = state.weather.main.toLowerCase();
                     if (condition.contains('rain') ||
                         condition.contains('drizzle') ||
                         condition.contains('thunderstorm')) {
-                      // Show an in-app dialog for rain alerts
                       RainAlertDialog.show(context, state.weather.cityName);
                     }
                   }
                 },
-                builder: (context, state) {
+                builder: (context, weatherState) {
                   return RefreshIndicator(
                     onRefresh: () async {
                       context.read<WeatherBloc>().add(
                         const GetCurrentWeatherEvent(),
                       );
                     },
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: _buildContent(state),
+                    child: const SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        children: [
+                          HomeWeatherContent(),
+                          SizedBox(height: 20),
+                          HomeForecastContent(),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -62,25 +81,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildContent(WeatherState state) {
-    if (state is WeatherLoading) {
-      return const WeatherShimmer();
-    } else if (state is WeatherLoaded) {
-      // Display the weather information using a custom widget
-      return CurrentWeatherDisplay(weather: state.weather);
-    } else if (state is WeatherError) {
-      // Show error message if something went wrong
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: Center(child: Text(state.message, textAlign: TextAlign.center)),
-      );
-    }
-    return const SizedBox(
-      height: 200,
-      child: Center(child: Text('Checking location...')),
     );
   }
 }
