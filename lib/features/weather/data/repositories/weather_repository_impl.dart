@@ -183,19 +183,9 @@ class WeatherRepositoryImpl implements WeatherRepository {
   }
 
   @override
-  Future<Either<Failure, void>> saveFavoriteCity(String cityName) async {
+  Future<Either<Failure, void>> saveFavoriteCities(List<String> cities) async {
     try {
-      await localDataSource.saveFavoriteCity(cityName);
-      return const Right(null);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> removeFavoriteCity(String cityName) async {
-    try {
-      await localDataSource.removeFavoriteCity(cityName);
+      await localDataSource.saveFavoriteCities(cities);
       return const Right(null);
     } catch (e) {
       return Left(CacheFailure(e.toString()));

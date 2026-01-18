@@ -8,14 +8,13 @@ abstract class WeatherLocalDataSource {
   Future<WeatherModel> getLastWeather({String? key});
   Future<void> cacheForecast(List<ForecastModel> forecastToCache);
   Future<List<ForecastModel>> getLastForecast();
-  Future<void> saveFavoriteCity(String cityName);
-  Future<void> removeFavoriteCity(String cityName);
+  Future<void> saveFavoriteCities(List<String> cityNames);
   Future<List<String>> getFavoriteCities();
 }
 
 class WeatherLocalDataSourceImpl implements WeatherLocalDataSource {
   final Box<WeatherModel> weatherBox;
-  final Box<String> favoritesBox;
+  final Box favoritesBox;
   final Box<List> forecastBox;
 
   WeatherLocalDataSourceImpl({
@@ -58,26 +57,17 @@ class WeatherLocalDataSourceImpl implements WeatherLocalDataSource {
 
   @override
   Future<List<String>> getFavoriteCities() {
-    return Future.value(favoritesBox.values.toList());
+    final cities = favoritesBox.get('ORDERED_FAVORITES');
+    if (cities != null) {
+      return Future.value(List<String>.from(cities));
+    }
+    // Fallback for legacy data if we want, but since we are changing box name in injection,
+    // we start fresh.
+    return Future.value([]);
   }
 
   @override
-  Future<void> saveFavoriteCity(String cityName) async {
-    if (!favoritesBox.values.contains(cityName)) {
-      await favoritesBox.add(cityName);
-    }
-  }
-
-  @override
-  Future<void> removeFavoriteCity(String cityName) async {
-    final Map<dynamic, String> favoritesMap = favoritesBox.toMap();
-    final dynamic key = favoritesMap.keys.firstWhere(
-      (k) => favoritesMap[k] == cityName,
-      orElse: () => null,
-    );
-
-    if (key != null) {
-      await favoritesBox.delete(key);
-    }
+  Future<void> saveFavoriteCities(List<String> cityNames) async {
+    await favoritesBox.put('ORDERED_FAVORITES', cityNames);
   }
 }

@@ -3,8 +3,7 @@ import '../../../../core/usecases/usecase.dart';
 import '../../domain/entities/weather.dart';
 import '../../domain/usecases/get_city_weather.dart';
 import '../../domain/usecases/get_favorite_cities.dart';
-import '../../domain/usecases/save_favorite_city.dart';
-import '../../domain/usecases/remove_favorite_city.dart';
+import '../../domain/usecases/save_favorite_cities.dart';
 import 'weather_list_event.dart';
 import 'weather_list_state.dart';
 
@@ -12,8 +11,7 @@ import 'weather_list_state.dart';
 class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
   final GetCityWeather getCityWeather;
   final GetFavoriteCities getFavoriteCities;
-  final SaveFavoriteCity saveFavoriteCity;
-  final RemoveFavoriteCity removeFavoriteCity;
+  final SaveFavoriteCities saveFavoriteCities;
 
   // Internal list to keep track of added cities' weather
   final List<WeatherEntity> _cityList = [];
@@ -21,8 +19,7 @@ class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
   WeatherListBloc({
     required this.getCityWeather,
     required this.getFavoriteCities,
-    required this.saveFavoriteCity,
-    required this.removeFavoriteCity,
+    required this.saveFavoriteCities,
   }) : super(WeatherListInitial()) {
     // Handle LoadDefaultCitiesEvent: fills the list with a predefined set of popular cities
     on<LoadDefaultCitiesEvent>((event, emit) async {
@@ -53,9 +50,7 @@ class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
           "Madrid",
           "Toronto",
         ];
-        for (final city in citiesToLoad) {
-          await saveFavoriteCity(city);
-        }
+        await saveFavoriteCities(citiesToLoad);
       }
 
       // 3. Fetch weather for all cities (remote or local fallback)
@@ -102,10 +97,10 @@ class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
           if (!_cityList.any(
             (element) => element.cityName == weather.cityName,
           )) {
-            // Save to Hive
-            await saveFavoriteCity(weather.cityName);
             // Insert at the beginning of the list
             _cityList.insert(0, weather);
+            // Save the entire ordered list to Hive
+            await saveFavoriteCities(_cityList.map((e) => e.cityName).toList());
           }
           emit(WeatherListUpdated(List.from(_cityList)));
         },
@@ -116,8 +111,8 @@ class WeatherListBloc extends Bloc<WeatherListEvent, WeatherListState> {
     on<RemoveCityEvent>((event, emit) async {
       final cityName = event.cityName;
       _cityList.removeWhere((element) => element.cityName == cityName);
-      // Remove from Hive
-      await removeFavoriteCity(cityName);
+      // Save revised list to Hive to preserve order and count
+      await saveFavoriteCities(_cityList.map((e) => e.cityName).toList());
       emit(WeatherListUpdated(List.from(_cityList)));
     });
 

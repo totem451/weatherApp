@@ -17,6 +17,5 @@ abstract class WeatherRepository {
   );
   // Favorites management
   Future<Either<Failure, List<String>>> getFavoriteCities();
-  Future<Either<Failure, void>> saveFavoriteCity(String cityName);
-  Future<Either<Failure, void>> removeFavoriteCity(String cityName);
+  Future<Either<Failure, void>> saveFavoriteCities(List<String> cities);
 }
