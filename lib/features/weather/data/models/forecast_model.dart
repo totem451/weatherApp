@@ -7,38 +7,33 @@ part 'forecast_model.g.dart';
 @HiveType(typeId: 1)
 class ForecastModel extends ForecastEntity {
   @HiveField(0)
+  @HiveField(0)
   @override
-  final DateTime dateTime;
+  DateTime get dateTime => super.dateTime;
 
   @HiveField(1)
   @override
-  final double temperature;
+  double get temperature => super.temperature;
 
   @HiveField(2)
   @override
-  final String main;
+  String get main => super.main;
 
   @HiveField(3)
   @override
-  final String description;
+  String get description => super.description;
 
   @HiveField(4)
   @override
-  final String icon;
+  String get icon => super.icon;
 
   const ForecastModel({
-    required this.dateTime,
-    required this.temperature,
-    required this.main,
-    required this.description,
-    required this.icon,
-  }) : super(
-         dateTime: dateTime,
-         temperature: temperature,
-         main: main,
-         description: description,
-         icon: icon,
-       );
+    required super.dateTime,
+    required super.temperature,
+    required super.main,
+    required super.description,
+    required super.icon,
+  });
 
   // Factory constructor for creating a ForecastModel from JSON
   factory ForecastModel.fromJson(Map<String, dynamic> json) {

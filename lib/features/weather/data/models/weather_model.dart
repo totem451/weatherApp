@@ -8,74 +8,63 @@ part 'weather_model.g.dart';
 @HiveType(typeId: 0)
 class WeatherModel extends WeatherEntity {
   @HiveField(0)
+  @HiveField(0)
   @override
-  final String cityName;
+  String get cityName => super.cityName;
 
   @HiveField(1)
   @override
-  final String main;
+  String get main => super.main;
 
   @HiveField(2)
   @override
-  final String description;
+  String get description => super.description;
 
   @HiveField(3)
   @override
-  final String icon;
+  String get icon => super.icon;
 
   @HiveField(4)
   @override
-  final double temperature;
+  double get temperature => super.temperature;
 
   @HiveField(5)
   @override
-  final double tempMin;
+  double get tempMin => super.tempMin;
 
   @HiveField(6)
   @override
-  final double tempMax;
+  double get tempMax => super.tempMax;
 
   @HiveField(7)
   @override
-  final int humidity;
+  int get humidity => super.humidity;
 
   @HiveField(8)
   @override
-  final double windSpeed;
+  double get windSpeed => super.windSpeed;
 
   @HiveField(9, defaultValue: 0.0)
   @override
-  final double latitude;
+  double get latitude => super.latitude;
 
   @HiveField(10, defaultValue: 0.0)
   @override
-  final double longitude;
+  double get longitude => super.longitude;
 
   const WeatherModel({
-    required this.cityName,
-    required this.main,
-    required this.description,
-    required this.icon,
-    required this.temperature,
-    required this.tempMin,
-    required this.tempMax,
-    required this.humidity,
-    required this.windSpeed,
-    required this.latitude,
-    required this.longitude,
-  }) : super(
-         cityName: cityName,
-         main: main,
-         description: description,
-         icon: icon,
-         temperature: temperature,
-         tempMin: tempMin,
-         tempMax: tempMax,
-         humidity: humidity,
-         windSpeed: windSpeed,
-         latitude: latitude,
-         longitude: longitude,
-       );
+    required super.cityName,
+    required super.main,
+    required super.description,
+    required super.icon,
+    required super.temperature,
+    required super.tempMin,
+    required super.tempMax,
+    required super.humidity,
+    required super.windSpeed,
+    required super.latitude,
+    required super.longitude,
+  });
 
   // Factory constructor to create a WeatherModel from OpenWeatherMap API JSON
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
