@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 abstract class NetworkInfo {
@@ -21,8 +22,26 @@ class NetworkInfoImpl implements NetworkInfo {
         now.difference(_lastCheck!).inSeconds < 3) {
       return _lastResult!;
     }
-    _lastResult = await connectionChecker.hasConnection;
+
+    // 1. Try standard connection checker (pings)
+    bool connected = await connectionChecker.hasConnection;
+
+    // 2. Fallback: Try DNS lookup if pings are blocked (common on some Wi-Fi)
+    if (!connected) {
+      try {
+        final result = await InternetAddress.lookup(
+          'google.com',
+        ).timeout(const Duration(seconds: 3));
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          connected = true;
+        }
+      } catch (_) {
+        connected = false;
+      }
+    }
+
+    _lastResult = connected;
     _lastCheck = now;
-    return _lastResult!;
+    return connected;
   }
 }
